@@ -16,7 +16,7 @@ function New-Canvas {
   $graphics.InterpolationMode = [System.Drawing.Drawing2D.InterpolationMode]::HighQualityBicubic
   $graphics.PixelOffsetMode = [System.Drawing.Drawing2D.PixelOffsetMode]::HighQuality
   $graphics.TextRenderingHint = [System.Drawing.Text.TextRenderingHint]::ClearTypeGridFit
-  $graphics.Clear([System.Drawing.ColorTranslator]::FromHtml("#EDF2F7"))
+  $graphics.Clear([System.Drawing.ColorTranslator]::FromHtml("#E9EEE9"))
 
   return @{ Bitmap = $bitmap; Graphics = $graphics }
 }
@@ -32,7 +32,7 @@ function Draw-Text {
     [System.Drawing.FontStyle] $Style = [System.Drawing.FontStyle]::Regular
   )
 
-  $font = New-Object System.Drawing.Font("Segoe UI", $Size, $Style, [System.Drawing.GraphicsUnit]::Pixel)
+  $font = New-Object System.Drawing.Font("Bahnschrift", $Size, $Style, [System.Drawing.GraphicsUnit]::Pixel)
   $brush = New-Object System.Drawing.SolidBrush([System.Drawing.ColorTranslator]::FromHtml($Color))
   $Graphics.DrawString($Text, $font, $brush, $X, $Y)
   $brush.Dispose()
@@ -105,13 +105,13 @@ function New-DesktopAsset {
 
   $canvas = New-Canvas
   $g = $canvas.Graphics
-  $headerBrush = New-Object System.Drawing.SolidBrush([System.Drawing.Color]::White)
+  $headerBrush = New-Object System.Drawing.SolidBrush([System.Drawing.ColorTranslator]::FromHtml("#FAFCF7"))
   $g.FillRectangle($headerBrush, 0, 0, 1000, 118)
   $headerBrush.Dispose()
-  Draw-Text -Graphics $g -Text $Title -X 28 -Y 24 -Size 30 -Color "#172333" -Style ([System.Drawing.FontStyle]::Bold)
-  Draw-Text -Graphics $g -Text $Subtitle -X 30 -Y 65 -Size 16 -Color "#536578"
-  Draw-Pill -Graphics $g -Text "React + TypeScript" -X 612 -Y 34 -Width 154 -Fill "#F8FAFC" -TextColor "#172333"
-  Draw-Pill -Graphics $g -Text "Mock integrations" -X 782 -Y 34 -Width 154 -Fill "#F8FAFC" -TextColor "#172333"
+  Draw-Text -Graphics $g -Text $Title -X 28 -Y 24 -Size 30 -Color "#101614" -Style ([System.Drawing.FontStyle]::Bold)
+  Draw-Text -Graphics $g -Text $Subtitle -X 30 -Y 65 -Size 16 -Color "#58675F"
+  Draw-Pill -Graphics $g -Text "React + TypeScript" -X 612 -Y 34 -Width 154 -Fill "#FFFFFF" -TextColor "#101614"
+  Draw-Pill -Graphics $g -Text "Mock integrations" -X 782 -Y 34 -Width 154 -Fill "#DCF3E8" -TextColor "#0F684C"
   Draw-FitImage -Graphics $g -Source $Source -X 18 -Y 132 -MaxWidth 964 -MaxHeight 600
   Save-Asset -Bitmap $canvas.Bitmap -Graphics $g -Path $Destination
 }
@@ -128,22 +128,22 @@ function New-MobileAsset {
   $g.FillRectangle($white, 0, 0, 1000, 750)
   $white.Dispose()
 
-  Draw-Text -Graphics $g -Text "Workflow Automation Builder" -X 58 -Y 76 -Size 34 -Color "#172333" -Style ([System.Drawing.FontStyle]::Bold)
-  Draw-Text -Graphics $g -Text "A Zapier / Make / n8n style automation" -X 60 -Y 132 -Size 19 -Color "#455665"
-  Draw-Text -Graphics $g -Text "demo with AI processing and API actions." -X 60 -Y 160 -Size 19 -Color "#455665"
-  Draw-Pill -Graphics $g -Text "Trigger" -X 60 -Y 224 -Width 92 -Fill "#DCF4EF" -TextColor "#155E56"
-  Draw-Pill -Graphics $g -Text "AI scoring" -X 168 -Y 224 -Width 116 -Fill "#ECE7FB" -TextColor "#503C89"
-  Draw-Pill -Graphics $g -Text "CRM / Slack / Sheets" -X 300 -Y 224 -Width 184 -Fill "#E5F2FA" -TextColor "#155074"
-  Draw-Text -Graphics $g -Text "Real project options:" -X 60 -Y 322 -Size 20 -Color "#172333" -Style ([System.Drawing.FontStyle]::Bold)
-  Draw-Text -Graphics $g -Text "OpenAI or rules-based processing" -X 86 -Y 372 -Size 18 -Color "#344554"
-  Draw-Text -Graphics $g -Text "CRM, Slack, Sheets, Airtable, Notion APIs" -X 86 -Y 414 -Size 18 -Color "#344554"
-  Draw-Text -Graphics $g -Text "Error handling, retries, and execution logs" -X 86 -Y 456 -Size 18 -Color "#344554"
-  Draw-Text -Graphics $g -Text "Custom dashboards and workflow controls" -X 86 -Y 498 -Size 18 -Color "#344554"
+  Draw-Text -Graphics $g -Text "Workflow Automation Builder" -X 58 -Y 76 -Size 34 -Color "#101614" -Style ([System.Drawing.FontStyle]::Bold)
+  Draw-Text -Graphics $g -Text "A control-room style automation demo" -X 60 -Y 132 -Size 19 -Color "#45534A"
+  Draw-Text -Graphics $g -Text "with AI processing and API actions." -X 60 -Y 160 -Size 19 -Color "#45534A"
+  Draw-Pill -Graphics $g -Text "Trigger" -X 60 -Y 224 -Width 92 -Fill "#DCF3E8" -TextColor "#0F684C"
+  Draw-Pill -Graphics $g -Text "AI scoring" -X 168 -Y 224 -Width 116 -Fill "#E7EAFB" -TextColor "#3F4E92"
+  Draw-Pill -Graphics $g -Text "CRM / Slack / Sheets" -X 300 -Y 224 -Width 184 -Fill "#E6EEF2" -TextColor "#1F668F"
+  Draw-Text -Graphics $g -Text "Real project options:" -X 60 -Y 322 -Size 20 -Color "#101614" -Style ([System.Drawing.FontStyle]::Bold)
+  Draw-Text -Graphics $g -Text "OpenAI or rules-based processing" -X 86 -Y 372 -Size 18 -Color "#34443B"
+  Draw-Text -Graphics $g -Text "CRM, Slack, Sheets, Airtable, Notion APIs" -X 86 -Y 414 -Size 18 -Color "#34443B"
+  Draw-Text -Graphics $g -Text "Error handling, retries, and execution logs" -X 86 -Y 456 -Size 18 -Color "#34443B"
+  Draw-Text -Graphics $g -Text "Custom dashboards and workflow controls" -X 86 -Y 498 -Size 18 -Color "#34443B"
 
   $shadow = New-Object System.Drawing.SolidBrush([System.Drawing.Color]::FromArgb(45, 23, 32, 38))
   $g.FillRectangle($shadow, 640, 52, 324, 660)
   $shadow.Dispose()
-  $phoneFrame = New-Object System.Drawing.SolidBrush([System.Drawing.ColorTranslator]::FromHtml("#172734"))
+  $phoneFrame = New-Object System.Drawing.SolidBrush([System.Drawing.ColorTranslator]::FromHtml("#101614"))
   $g.FillRectangle($phoneFrame, 625, 38, 324, 660)
   $phoneFrame.Dispose()
   Draw-FitImage -Graphics $g -Source $Source -X 637 -Y 52 -MaxWidth 300 -MaxHeight 636

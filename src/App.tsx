@@ -272,6 +272,16 @@ export default function App() {
           <h1>Workflow Automation Builder</h1>
         </div>
 
+        <div className="system-state" aria-label="Workflow system state">
+          <span className={`state-dot ${isRunning ? "live" : ""}`} />
+          <div>
+            <strong>{isRunning ? "Live run" : "Ready"}</strong>
+            <small>
+              {completedCount}/{nodeOrder.length} modules complete
+            </small>
+          </div>
+        </div>
+
         <div className="header-actions">
           <button type="button" className="secondary-button" onClick={loadSampleLead} disabled={isRunning}>
             <RefreshCw size={16} aria-hidden="true" />
@@ -330,6 +340,12 @@ export default function App() {
               complete
             </div>
           </div>
+          <div className="stage-ruler" aria-hidden="true">
+            <span>INBOUND</span>
+            <span>CLASSIFY</span>
+            <span>ROUTE</span>
+            <span>ACTIONS</span>
+          </div>
 
           <div className="workflow-lane" aria-label="Workflow nodes">
             {workflowNodes.map((node, index) => {
@@ -346,10 +362,14 @@ export default function App() {
                     <span className={`node-orb ${node.kind}`}>
                       {status === "running" ? <Loader2 size={19} aria-hidden="true" /> : <Icon size={19} aria-hidden="true" />}
                     </span>
+                    <span className={`node-light ${status}`} />
                     <span className="node-index">0{index + 1}</span>
                     <strong>{node.title}</strong>
                     <small>{node.subtitle}</small>
-                    <em>{status}</em>
+                    <em>
+                      <span />
+                      {status}
+                    </em>
                   </button>
                   {index < workflowNodes.length - 1 && (
                     <span className={`flow-link ${statuses[node.id] === "success" ? "active" : ""}`} aria-hidden="true">
@@ -375,6 +395,9 @@ export default function App() {
             <span>Lead score</span>
             <strong>{aiResult?.score ?? "--"}</strong>
             <p>{aiResult ? `${aiResult.priority} priority with ${aiResult.confidence}% confidence` : "Waiting for AI node output"}</p>
+            <div className="signal-meter" aria-hidden="true">
+              <span style={{ width: `${progress}%` }} />
+            </div>
           </div>
 
           <div className="console-block">
