@@ -4,7 +4,6 @@ import {
   Bell,
   Bot,
   CheckCircle2,
-  ClipboardList,
   Database,
   GitBranch,
   History,
@@ -14,7 +13,6 @@ import {
   RefreshCw,
   RotateCcw,
   Send,
-  Settings2,
   Sheet,
   Sparkles,
   Webhook,
@@ -158,7 +156,7 @@ function describeRunStart(node: WorkflowNode) {
 
 export default function App() {
   const [lead, setLead] = useState<LeadInput>(sampleLead);
-  const [selectedNodeId, setSelectedNodeId] = useState<WorkflowNodeId>("slack");
+  const [selectedNodeId, setSelectedNodeId] = useState<WorkflowNodeId>("ai");
   const [statuses, setStatuses] = useState(completedStatuses);
   const [logs, setLogs] = useState<ExecutionLog[]>(initialLogs);
   const [aiResult, setAiResult] = useState<AiResult | null>(sampleResult);
@@ -203,15 +201,15 @@ export default function App() {
     setStatuses(initialStatuses);
     setLogs([]);
     setAiResult(buildAiResult(lead));
-    setSelectedNodeId("ai");
+    setSelectedNodeId("trigger");
   }
 
   function loadSampleLead() {
     setLead(sampleLead);
     setAiResult(buildAiResult(sampleLead));
-    setStatuses(initialStatuses);
-    setLogs([]);
-    setSelectedNodeId("trigger");
+    setStatuses(completedStatuses);
+    setLogs(initialLogs);
+    setSelectedNodeId("ai");
   }
 
   async function runWorkflow() {
@@ -257,100 +255,43 @@ export default function App() {
   }
 
   return (
-    <div className="app-shell">
-      <aside className="sidebar">
-        <div className="brand">
+    <div className="studio-shell">
+      <header className="studio-top">
+        <div className="brand-line">
           <div className="brand-mark">
             <Workflow size={22} aria-hidden="true" />
           </div>
           <div>
-            <span>Portfolio demo</span>
+            <span>Automation studio</span>
             <strong>AutoFlow Ops</strong>
           </div>
         </div>
 
-        <nav className="nav-list" aria-label="Workflow sections">
-          <a href="#builder" className="active">
-            <Workflow size={17} aria-hidden="true" />
-            Builder
-          </a>
-          <a href="#run">
-            <Activity size={17} aria-hidden="true" />
-            Run monitor
-          </a>
-          <a href="#integrations">
-            <Settings2 size={17} aria-hidden="true" />
-            Integrations
-          </a>
-          <a href="#output">
-            <ClipboardList size={17} aria-hidden="true" />
-            Output
-          </a>
-        </nav>
+        <div className="title-block">
+          <p className="eyebrow">Zapier / Make / n8n style workflow</p>
+          <h1>Workflow Automation Builder</h1>
+        </div>
 
-        <section className="sidebar-card" id="integrations">
-          <div className="section-title">
-            <p>Mock integrations</p>
-            <span>Safe preview mode</span>
-          </div>
-          <div className="integration-list">
-            {integrations.map((integration) => (
-              <article key={integration.name}>
-                <CheckCircle2 size={16} aria-hidden="true" />
-                <div>
-                  <strong>{integration.name}</strong>
-                  <span>{integration.detail}</span>
-                </div>
-              </article>
-            ))}
-          </div>
-        </section>
-      </aside>
+        <div className="header-actions">
+          <button type="button" className="secondary-button" onClick={loadSampleLead} disabled={isRunning}>
+            <RefreshCw size={16} aria-hidden="true" />
+            Sample
+          </button>
+          <button type="button" className="primary-button" onClick={runWorkflow} disabled={isRunning}>
+            {isRunning ? <Loader2 size={16} aria-hidden="true" /> : <Play size={16} aria-hidden="true" />}
+            {isRunning ? "Running" : "Run"}
+          </button>
+        </div>
+      </header>
 
-      <main className="workspace">
-        <header className="topbar">
-          <div>
-            <p className="eyebrow">Zapier / Make / n8n style automation</p>
-            <h1>Workflow Automation Builder</h1>
+      <main className="studio-layout">
+        <section className="trigger-console">
+          <div className="panel-kicker">
+            <Webhook size={17} aria-hidden="true" />
+            Trigger payload
           </div>
-          <div className="top-actions">
-            <button type="button" className="secondary-button" onClick={loadSampleLead} disabled={isRunning}>
-              <RefreshCw size={16} aria-hidden="true" />
-              Sample lead
-            </button>
-            <button type="button" className="primary-button" onClick={runWorkflow} disabled={isRunning}>
-              {isRunning ? <Loader2 size={16} aria-hidden="true" /> : <Play size={16} aria-hidden="true" />}
-              {isRunning ? "Running" : "Run workflow"}
-            </button>
-          </div>
-        </header>
-
-        <section className="status-row" aria-label="Workflow status">
-          <span>
-            <Sparkles size={16} aria-hidden="true" />
-            AI lead scoring
-          </span>
-          <span>
-            <GitBranch size={16} aria-hidden="true" />
-            Conditional routing
-          </span>
-          <span>
-            <Send size={16} aria-hidden="true" />
-            CRM + Slack + Sheets actions
-          </span>
-        </section>
-
-        <section className="lead-panel">
-          <div className="panel-heading">
-            <div>
-              <p className="eyebrow">Trigger payload</p>
-              <h2>Inbound lead sample</h2>
-            </div>
-            <button type="button" className="icon-button" onClick={resetWorkflow} disabled={isRunning} aria-label="Reset workflow">
-              <RotateCcw size={16} aria-hidden="true" />
-            </button>
-          </div>
-          <div className="lead-grid">
+          <h2>Inbound lead</h2>
+          <div className="lead-form">
             <label>
               Contact
               <input value={lead.name} onChange={(event) => updateLead("name", event.target.value)} />
@@ -367,123 +308,126 @@ export default function App() {
               Source
               <input value={lead.source} onChange={(event) => updateLead("source", event.target.value)} />
             </label>
-            <label className="lead-message">
+            <label className="message-field">
               Message
               <textarea value={lead.message} onChange={(event) => updateLead("message", event.target.value)} />
             </label>
           </div>
+          <button type="button" className="ghost-button" onClick={resetWorkflow} disabled={isRunning}>
+            <RotateCcw size={16} aria-hidden="true" />
+            Reset run state
+          </button>
         </section>
 
-        <section className="builder-grid" id="builder">
-          <div className="canvas-panel">
-            <div className="panel-heading">
-              <div>
-                <p className="eyebrow">Visual workflow</p>
-                <h2>Trigger to AI processing to actions</h2>
-              </div>
-              <div className="progress-pill">{progress}% complete</div>
-            </div>
-            <div className="workflow-canvas" aria-label="Workflow nodes">
-              {workflowNodes.map((node, index) => {
-                const Icon = iconByNode[node.id];
-                const status = statuses[node.id];
-                return (
-                  <div className="node-shell" key={node.id}>
-                    <button
-                      type="button"
-                      className={`workflow-node ${selectedNodeId === node.id ? "selected" : ""} ${status}`}
-                      onClick={() => setSelectedNodeId(node.id)}
-                    >
-                      <span className={`node-icon ${node.kind}`}>
-                        {status === "running" ? <Loader2 size={20} aria-hidden="true" /> : <Icon size={20} aria-hidden="true" />}
-                      </span>
-                      <span className="node-copy">
-                        <strong>{node.title}</strong>
-                        <small>{node.subtitle}</small>
-                      </span>
-                      <span className={`node-status ${status}`}>{status}</span>
-                    </button>
-                    {index < workflowNodes.length - 1 && (
-                      <div className="connector" aria-hidden="true">
-                        <ArrowRight size={16} />
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          <aside className="settings-panel">
-            <div className="panel-heading">
-              <div>
-                <p className="eyebrow">Selected node</p>
-                <h2>{selectedNode.title}</h2>
-              </div>
-              <span className={`kind-badge ${selectedNode.kind}`}>{selectedNode.system}</span>
-            </div>
-            <p className="node-description">{selectedNode.description}</p>
-            <div className="config-list">
-              {selectedNode.config.map((item) => (
-                <div className="config-row" key={item.label}>
-                  <span>{item.label}</span>
-                  <strong>{item.value}</strong>
-                </div>
-              ))}
-            </div>
-          </aside>
-        </section>
-      </main>
-
-      <aside className="run-panel" id="run">
-        <section className="run-summary">
-          <div className="panel-heading">
+        <section className="automation-stage" id="builder">
+          <div className="stage-toolbar">
             <div>
-              <p className="eyebrow">Run preview</p>
-              <h2>Execution #{runCount}</h2>
+              <p className="eyebrow">Visual workflow</p>
+              <h2>Lead intake to AI routing to operations actions</h2>
             </div>
-            <Bell size={19} aria-hidden="true" />
+            <div className="progress-chip">
+              <span>{progress}%</span>
+              complete
+            </div>
           </div>
 
-          <div className="score-card" id="output">
+          <div className="workflow-lane" aria-label="Workflow nodes">
+            {workflowNodes.map((node, index) => {
+              const Icon = iconByNode[node.id];
+              const status = statuses[node.id];
+
+              return (
+                <div className="lane-step" key={node.id}>
+                  <button
+                    type="button"
+                    className={`flow-node ${selectedNodeId === node.id ? "selected" : ""} ${status}`}
+                    onClick={() => setSelectedNodeId(node.id)}
+                  >
+                    <span className={`node-orb ${node.kind}`}>
+                      {status === "running" ? <Loader2 size={19} aria-hidden="true" /> : <Icon size={19} aria-hidden="true" />}
+                    </span>
+                    <span className="node-index">0{index + 1}</span>
+                    <strong>{node.title}</strong>
+                    <small>{node.subtitle}</small>
+                    <em>{status}</em>
+                  </button>
+                  {index < workflowNodes.length - 1 && (
+                    <span className={`flow-link ${statuses[node.id] === "success" ? "active" : ""}`} aria-hidden="true">
+                      <ArrowRight size={18} />
+                    </span>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
+        <aside className="run-console" id="run">
+          <div className="console-header">
+            <div>
+              <p>Run monitor</p>
+              <strong>Execution #{runCount}</strong>
+            </div>
+            <Bell size={18} aria-hidden="true" />
+          </div>
+
+          <div className="score-display" id="output">
             <span>Lead score</span>
             <strong>{aiResult?.score ?? "--"}</strong>
             <p>{aiResult ? `${aiResult.priority} priority with ${aiResult.confidence}% confidence` : "Waiting for AI node output"}</p>
           </div>
 
-          <div className="output-block">
-            <strong>AI summary</strong>
+          <div className="console-block">
+            <span>AI summary</span>
             <p>{aiResult?.summary ?? "Run the workflow to generate a structured lead summary."}</p>
           </div>
-          <div className="output-block">
-            <strong>Recommended action</strong>
+          <div className="console-block">
+            <span>Recommended action</span>
             <p>{aiResult?.recommendedAction ?? "No action generated yet."}</p>
           </div>
-        </section>
+        </aside>
+      </main>
 
-        <section className="mapping-panel">
-          <div className="section-title">
-            <p>Data mapping</p>
-            <span>Inputs to actions</span>
+      <section className="details-dock">
+        <article className="selected-card">
+          <div className="dock-title">
+            <span>Selected node</span>
+            <strong>{selectedNode.title}</strong>
+          </div>
+          <p>{selectedNode.description}</p>
+          <div className="config-grid">
+            {selectedNode.config.map((item) => (
+              <div className="config-pill" key={item.label}>
+                <span>{item.label}</span>
+                <strong>{item.value}</strong>
+              </div>
+            ))}
+          </div>
+        </article>
+
+        <article className="mapping-card">
+          <div className="dock-title">
+            <span>Data mapping</span>
+            <strong>Inputs to actions</strong>
           </div>
           <div className="mapping-list">
             {fieldMap.map((field) => (
-              <article key={field.source}>
+              <div className="mapping-row" key={field.source}>
                 <span>{field.source}</span>
                 <ArrowRight size={13} aria-hidden="true" />
                 <strong>{field.target}</strong>
                 <small>{field.value}</small>
-              </article>
+              </div>
             ))}
           </div>
-        </section>
+        </article>
 
-        <section className="log-panel">
-          <div className="section-title">
-            <p>Execution log</p>
-            <span>{logs.length || 0} events</span>
+        <article className="log-card">
+          <div className="dock-title">
+            <span>Execution log</span>
+            <strong>{logs.length} events</strong>
           </div>
-          <div className="log-list">
+          <div className="event-list">
             {logs.length === 0 ? (
               <div className="empty-log">
                 <History size={18} aria-hidden="true" />
@@ -491,19 +435,56 @@ export default function App() {
               </div>
             ) : (
               logs.map((log) => (
-                <article className="log-item" key={log.id}>
-                  <span className={`log-dot ${statuses[log.nodeId]}`} />
+                <div className="event-row" key={log.id}>
+                  <span className={`event-dot ${statuses[log.nodeId]}`} />
                   <div>
                     <strong>{log.title}</strong>
                     <p>{log.detail}</p>
                     <small>{log.timestamp}</small>
                   </div>
-                </article>
+                </div>
               ))
             )}
           </div>
-        </section>
-      </aside>
+        </article>
+
+        <article className="integration-dock" id="integrations">
+          <div className="dock-title">
+            <span>Mock integrations</span>
+            <strong>Safe preview mode</strong>
+          </div>
+          <div className="integration-grid">
+            {integrations.map((integration) => (
+              <div className="integration-chip" key={integration.name}>
+                <CheckCircle2 size={15} aria-hidden="true" />
+                <div>
+                  <strong>{integration.name}</strong>
+                  <span>{integration.detail}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </article>
+      </section>
+
+      <footer className="capability-strip">
+        <span>
+          <Sparkles size={15} aria-hidden="true" />
+          AI lead scoring
+        </span>
+        <span>
+          <GitBranch size={15} aria-hidden="true" />
+          Conditional routing
+        </span>
+        <span>
+          <Send size={15} aria-hidden="true" />
+          CRM + Slack + Sheets actions
+        </span>
+        <span>
+          <Activity size={15} aria-hidden="true" />
+          Execution logs
+        </span>
+      </footer>
     </div>
   );
 }
